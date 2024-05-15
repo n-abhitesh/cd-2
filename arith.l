@@ -1,17 +1,21 @@
-%{
-    #include "y.tab.h"
-%}
+%{ 
+/* Definition section */
+#include <stdio.h> 
+#include "arth.tab.h" 
+extern int yylval; 
+%} 
 
-%%
+/* Rule Section */
+%% 
+[0-9]+ { 
+    yylval = atoi(yytext); 
+    return NUMBER; 
+} 
+[\t] ; 
+[\n] return 0; 
+. return yytext[0]; 
+%% 
 
-[a-zA-Z_][a-zA-Z_0-9]*    return id;
-[0-9]+(\.[0-9]*)?          return num;
-[+/*]                      return op;
-.                          return yytext[0];
-\n                         return 0;
-
-%%
-
-int yywrap() {
-    return 1;
+int yywrap() { 
+    return 1; 
 }
