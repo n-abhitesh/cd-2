@@ -1,37 +1,45 @@
-%{
-#include <stdio.h>
-int valid = 1;
-%}
+%{ 
+/* Definition section */
+#include <stdio.h> 
+int flag = 0; 
+int yylex();
+void yyerror();
+%} 
 
-%token num id op
+%token NUMBER 
 
-%%
+%left '+' '-'
+%left '*' '/' '%'
+%left '(' ')'
 
-start : id '=' s ';'
-s     : id x
-      | num x
-      | '-' num x
-      | '(' s ')' x
-      ;
+/* Rule Section */
+%% 
 
-x     : op s
-      | '-' s
-      |
-      ;
+ArithmeticExpression: E { 
+    printf("\nResult=%d\n", $$); 
+    return 0; 
+}; 
 
-%%
+E: E '+' E { $$ = $1 + $3; } 
+ | E '-' E { $$ = $1 - $3; } 
+ | E '*' E { $$ = $1 * $3; } 
+ | E '/' E { $$ = $1 / $3; } 
+ | E '%' E { $$ = $1 % $3; } 
+ | '(' E ')' { $$ = $2; } 
+ | NUMBER { $$ = $1; } 
+ ; 
 
-int yyerror() {
-    valid = 0;
-    printf("\nInvalid expression!\n");
-    return 0;
-}
+%% 
 
-int main() {
-    printf("\nEnter the expression:\n");
-    yyparse();
-    if (valid) {
-        printf("\nValid expression!\n");
-    }
-    return 0;
+//driver code 
+void main() { 
+    printf("\nEnter Any Arithmetic Expression \n"); 
+    yyparse(); 
+    if (flag == 0) 
+        printf("\nEntered arithmetic expression is Valid\n\n"); 
+} 
+
+void yyerror() { 
+    printf("\nEntered arithmetic expression is Invalid\n\n"); 
+    flag = 1; 
 }
