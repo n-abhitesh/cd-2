@@ -1,37 +1,40 @@
-// calc.y - Parser file
 %{
 #include <stdio.h>
-int yylex(void);
+#include <stdlib.h>
+int yylex();
 void yyerror(const char *s);
 %}
 
-%token NUM
+%union {
+    int dval;
+}
+
+%token <dval> DIGIT
+%type <dval> expr expr1
 
 %%
 
-input: /* empty */
-     | input line
+line : expr '\n' { printf("%d\n", $1); }
      ;
 
-line: '\n'
-    | exp '\n' { printf("Result: %d\n", $1); }
-    ;
+expr : expr '+' expr1 { $$ = $1 + $3; }
+     | expr '-' expr1 { $$ = $1 - $3; }
+     | expr '*' expr1 { $$ = $1 * $3; }
+     | expr '/' expr1 { $$ = $1 / $3; }
+     | expr1
+     ;
 
-exp: NUM       { $$ = $1; }
-   | exp '+' exp { $$ = $1 + $3; }
-   | exp '-' exp { $$ = $1 - $3; }
-   | exp '*' exp { $$ = $1 * $3; }
-   | exp '/' exp { $$ = $1 / $3; }
-   | '(' exp ')' { $$ = $2; }
-   ;
+expr1 : '(' expr ')' { $$ = $2; }
+      | DIGIT           { $$ = $1; }
+      ;
 
 %%
-
-void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
-}
 
 int main() {
     yyparse();
     return 0;
+}
+
+void yyerror(const char *s) {
+    printf("%s\n", s);
 }
