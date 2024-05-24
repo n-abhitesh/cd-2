@@ -19,3 +19,8 @@ extern int yylval;
 int yywrap() { 
     return 1; 
 }
+
+
+//flex arith.l
+//bison -d arith.y
+//gcc lex.yy.c arith.tab.c
