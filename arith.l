@@ -1,7 +1,7 @@
 %{ 
 /* Definition section */
 #include <stdio.h> 
-#include "arth.tab.h" 
+#include "arith.tab.h" 
 extern int yylval; 
 %} 
 
